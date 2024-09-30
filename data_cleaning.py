@@ -35,4 +35,4 @@ def cleaning_data(path): #parameter 는 xlsx 파일이 저장되어있는 디렉
 
 
 if __name__ == "__main__":
-    cleaning_data("/Users/minji/Desktop/[강의]24_2학년_2학기/오픈소스/data_about_files")
+    cleaning_data("xlsx 이 저장되어있는 디렉토리 경로 넣어주세요. 넣어준 디렉토리 경로의 상위 디렉토리는 반드시 작업디렉토리여야 합니다.")
