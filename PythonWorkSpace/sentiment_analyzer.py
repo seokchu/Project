@@ -63,12 +63,4 @@ class SentimentAnalyzer:
         
         
 if __name__ == "__main__": 
-    test_file = Path("/Users/minji/Desktop/한밭대/[강의]24_2학년_2학기/오픈소스/RevKeyRec/rsc/crawled_review/review_about_갈란츠 미니 1도어 냉장고..json")
-    with open(test_file,'r',encoding='utf-8') as f:
-        file = json.load(f)
-        
-    analyzer = SentimentAnalyzer(file)
-    keywords = analyzer.get_keywords()
     
-    print(f"긍정 키워드:{keywords["pos"]}")
-    print(f"부정 키워드:{keywords["neg"]}")
