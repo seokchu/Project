@@ -3,6 +3,7 @@ from textblob import TextBlob #영어 감성 분석을 위한 라이브러리
 from sklearn.feature_extraction.text import CountVectorizer #키워드 추출을 위한 라이브러리
 from collections import Counter #단어 빈도수 계산
 from pathlib import Path
+from tqdm import tqdm
 import os,json
 
 class SentimentAnalyzer:
@@ -46,7 +47,7 @@ class SentimentAnalyzer:
         return keywords
     
     #감성분석 + 키워드 추출 수행하는 메인함수!
-    def get_keywords(self,k=5):
+    def get_keywords(self,k=5) -> int:
         pos_rev,neg_rev = self.analyzer(self.reviews) #리뷰 분류
         
         positive_keywords = self.extract_keywords(pos_rev,k) #긍정 키워드
@@ -64,3 +65,24 @@ class SentimentAnalyzer:
         
 if __name__ == "__main__": 
     
+    root_dir = Path("clone 받아와서 rsc 경로 삽입해주기") ; save_dir = Path("rsc > analyzed_data 디렉토리 만들기")
+    json_data = [file for file in root_dir.iterdir() if file.is_file()] #파일객체 반환
+        
+    with tqdm(total=len(json_data),desc= "Process rate") as bar:
+        for file in json_data:
+            object_name = str(file).split('_')[-1]
+            
+            with open(file,'r',encoding='utf-8') as f:
+                data = json.load(f)
+                
+            analyzer = SentimentAnalyzer(data)
+            result = analyzer.get_keywords(k="k값 조절해서 int 입력(현재 default값 5임")
+            save_file = save_dir / object_name 
+            
+            with open(save_file,'w',encoding='utf-8') as f:
+                json.dump(result,f,ensure_ascii=False,indent=4)
+                
+            bar.update(1)
+            
+                    
+        
