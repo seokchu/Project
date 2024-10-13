@@ -65,18 +65,21 @@ class SentimentAnalyzer:
         
 if __name__ == "__main__": 
     
-    root_dir = Path("clone 받아와서 rsc 경로 삽입해주기") ; save_dir = Path("rsc > analyzed_data 디렉토리 만들기")
+    root_dir = Path("/Users/minji/Desktop/한밭대/[강의]24_2학년_2학기/오픈소스/RevKeyRec/rsc/crawled_review") ; save_dir = Path("/Users/minji/Desktop/한밭대/[강의]24_2학년_2학기/오픈소스/RevKeyRec/analyzed_data")
     json_data = [file for file in root_dir.iterdir() if file.is_file()] #파일객체 반환
+    
         
     with tqdm(total=len(json_data),desc= "Process rate") as bar:
         for file in json_data:
+            if str(file).split("/")[-1] == ".DS_Store" or str(file).split("/")[-1] == "object_url.csv":
+                continue
             object_name = str(file).split('_')[-1]
             
             with open(file,'r',encoding='utf-8') as f:
                 data = json.load(f)
                 
             analyzer = SentimentAnalyzer(data)
-            result = analyzer.get_keywords(k="k값 조절해서 int 입력(현재 default값 5임")
+            result = analyzer.get_keywords(k=10)
             save_file = save_dir / object_name 
             
             with open(save_file,'w',encoding='utf-8') as f:
