@@ -5,6 +5,10 @@ from pydantic import BaseModel
 from typing import Any
 import os
 
+import firebase_admin
+
+
+
 app = FastAPI() #FasAPI 인스턴스 생성
 
 class Process_of_DB: #firebase에 연결 및 데이터를 가져오는 클래스
