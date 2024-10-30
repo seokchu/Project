@@ -32,7 +32,7 @@ class Process_of_DB: #firebase에 연결 및 데이터를 가져오는 클래스
         
         
 firebase_client = Process_of_DB(
-    "/Users/minji/Desktop/한밭대/[강의]24_2학년_2학기/오픈소스/RevKeyRec/PythonWorkSpace/Back/osp-revkeyrec-firebase-adminsdk-rvlp5-baafce142b.json",
+    "환경변수로 firbase 인증 json 등록하세요",
     "https://osp-revkeyrec-default-rtdb.firebaseio.com"
     )
 
