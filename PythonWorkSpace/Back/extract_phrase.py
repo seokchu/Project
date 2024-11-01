@@ -1,12 +1,13 @@
 from openai import OpenAI,OpenAIError
 from pathlib import Path
 from tqdm import tqdm
-#from dotenv import load_dotenv #윈도우 전용 .env 로드하기 위한 라이브러리 / pip install python-dotenv 먼저 실행할 것
+from dotenv import load_dotenv #윈도우 전용 .env 로드하기 위한 라이브러리 / pip install python-dotenv 먼저 실행할 것
 from collections import defaultdict #defaultdict -> dict관련 강의때 학습 응용
 import os,json,time
 
 #윈도우 전용 명령 실행
-#load_dotenv() 
+load_dotenv() 
+
 
 def generate_JSON(review_dir:str,phrases_JSON:str):
     review = {
@@ -28,8 +29,8 @@ def generate_JSON(review_dir:str,phrases_JSON:str):
         우리는 문장의 키워드를 추출하여 감성분석을 진행하기 위해, 한국어 문장의 불용어를 제거 및 문장의 핵심 어구를 뽑아내야 합니다. 조사, 접속사, 의존명사, 어미, 고유명사 등과 같은 키워드 분류에 적합하지 않은 불용어를 제거하여 핵심 어구를 뽑아내야 합니다. 해당 프로세스의 예시는 {review["리뷰내용"]}의 프로세스 처리 결과인 {shot}입니다. return 형식은 {json_format}을 참고하세요.
     """
 
-    client = OpenAI(api_key= os.getenv("gpt_osp")) ; error_stop = False
-    with tqdm(total=len(Path(review_dir).iterdir()),desc = "Progress") as bar:
+    client = OpenAI(api_key= os.getenv("gpt_api")) ; error_stop = False
+    with tqdm(total=len(os.listdir(review_dir)),desc = "Progress") as bar:
         for file in Path(review_dir).iterdir():
             if os.path.split(str(file))[1] == '.DS_Store':
                 continue
@@ -77,4 +78,4 @@ def generate_JSON(review_dir:str,phrases_JSON:str):
 
 
 if __name__ == "__main__":
-    generate_JSON("리뷰 경로","저장 경로")
+    generate_JSON("D:/학교/team2/RevKeyRec/rsc/crawled_review","D:/학교/team2/RevKeyRec/rsc/phrases_JSON")
