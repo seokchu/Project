@@ -1,10 +1,12 @@
-from openai import OpenAI
+from openai import OpenAI,OpenAIError
 from pathlib import Path
 from tqdm import tqdm
+#from dotenv import load_dotenv #윈도우 전용 .env 로드하기 위한 라이브러리 / pip install python-dotenv 먼저 실행할 것
 from collections import defaultdict #defaultdict -> dict관련 강의때 학습 응용
 import os,json
 
-
+#윈도우 전용 명령 실행
+#load_dotenv() 
 
 def generate_JSON(review_dir:str,phrases_JSON:str):
     review = {
@@ -26,7 +28,7 @@ def generate_JSON(review_dir:str,phrases_JSON:str):
         우리는 문장의 키워드를 추출하여 감성분석을 진행하기 위해, 한국어 문장의 불용어를 제거 및 문장의 핵심 어구를 뽑아내야 합니다. 조사, 접속사, 의존명사, 어미, 고유명사 등과 같은 키워드 분류에 적합하지 않은 불용어를 제거하여 핵심 어구를 뽑아내야 합니다. 해당 프로세스의 예시는 {review["리뷰내용"]}의 프로세스 처리 결과인 {shot}입니다. return 형식은 {json_format}을 참고하세요.
     """
 
-    client = OpenAI(api_key= os.getenv("gpt_osp"))
+    client = OpenAI(api_key= os.getenv("gpt_osp")) ; error_stop = False
     with tqdm(total=len(Path(review_dir).iterdir()),desc = "Progress") as bar:
         for file in Path(review_dir).iterdir():
             if os.path.split(str(file))[1] == '.DS_Store':
@@ -35,28 +37,39 @@ def generate_JSON(review_dir:str,phrases_JSON:str):
             #저장 파일 이름 설정 / 파일마다 output 존재
             name = os.path.split(str(file))[1].split("_")[-1] ; name = name.replace("..json","") ; print(name)
             output = defaultdict(list); output["object"] = name  ; output["object"] = str(output["object"])
+            review_cnt = 0 #임시 리뷰 카운팅 변수
             
             
             with open(file,'r',encoding='utf-8') as f:
                 data_set = json.load(f)
             
             for data in data_set:
-                data = data["리뷰내용"]
-                response = client.chat.completions.create(
-                    model="gpt-4o", #모델 설정
-                    messages=[
-                        {"role" : "system","content": "You are an assistant that provides concise and accurate JSON formatted responses." },
-                        {"role":"user","content": prompt+f"를 참고하여 {data}를 처리하여 json 형식으로 제공하세요."}
-                    ],
-                    response_format = {"type":"json_object"}  #json 형식으로 출력 진행 -> prompt에서 'json' 언급해줘야함.
-                )
-                #json객체
-                res = response.choices[0].message.content ; res = eval(res)
-                print(res)
+                if review_cnt > 30 :
+                    break
+                try:
+                    data = data["리뷰내용"]
+                    response = client.chat.completions.create(
+                        model="gpt-4o", #모델 설정
+                        messages=[
+                            {"role" : "system","content": "You are an assistant that provides concise and accurate JSON formatted responses." },
+                            {"role":"user","content": prompt+f"를 참고하여 {data}를 처리하여 json 형식으로 제공하세요."}
+                        ],
+                        response_format = {"type":"json_object"}  #json 형식으로 출력 진행 -> prompt에서 'json' 언급해줘야함.
+                    )
+                    #json객체
+                    res = response.choices[0].message.content ; res = eval(res)
+                    print(res)
+                    
+                    output["data"].extend(res["output"])
+                    review_cnt += 1
+                except OpenAIError as e:
+                    print(f"ERROR : {e}") ; error_stop = True
+                    break
                 
-                output["data"].extend(res["output"])
-                
-            
+            if error_stop:
+                with open(Path(phrases_JSON)/f"{name}_ErrorStop.json",'w',encoding='utf-8') as f:
+                    json.dump(output,f,ensure_ascii=False,indent=4)
+                break
             #하나의 상품의 모든 어구 추출이 끝난 경우 파일 저장
             with open(Path(phrases_JSON)/f"{name}.json",'w',encoding='utf-8') as f:
                 json.dump(output,f,ensure_ascii=False,indent=4)
