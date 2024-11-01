@@ -3,7 +3,7 @@ from pathlib import Path
 from tqdm import tqdm
 #from dotenv import load_dotenv #윈도우 전용 .env 로드하기 위한 라이브러리 / pip install python-dotenv 먼저 실행할 것
 from collections import defaultdict #defaultdict -> dict관련 강의때 학습 응용
-import os,json
+import os,json,time
 
 #윈도우 전용 명령 실행
 #load_dotenv() 
@@ -60,7 +60,7 @@ def generate_JSON(review_dir:str,phrases_JSON:str):
                     res = response.choices[0].message.content ; res = eval(res)
                     print(res)
                     
-                    output["data"].extend(res["output"])
+                    output["data"].extend(res["output"]) ; time.sleep(1)
                     review_cnt += 1
                 except OpenAIError as e:
                     print(f"ERROR : {e}") ; error_stop = True
