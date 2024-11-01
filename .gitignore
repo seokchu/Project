@@ -3,3 +3,4 @@ osp_venv/
 PythonWorkSpace/Back/.env
 PythonWorkSpace/Back/osp-revkeyrec-firebase-adminsdk-rvlp5-034c3d1c56.json
 RevKeyRec/PythonWorkSpace/Front/
+RevKeyRec/Back/.env
