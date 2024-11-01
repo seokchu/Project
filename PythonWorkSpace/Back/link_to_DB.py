@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from typing import Any
 import os
 
-import firebase_admin
 
 
 
@@ -32,7 +31,7 @@ class Process_of_DB: #firebase에 연결 및 데이터를 가져오는 클래스
         
         
 firebase_client = Process_of_DB(
-    "환경변수로 firbase 인증 json 등록하세요",
+    os.getenv("firebase"),
     "https://osp-revkeyrec-default-rtdb.firebaseio.com"
     )
 
