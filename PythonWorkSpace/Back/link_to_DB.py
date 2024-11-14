@@ -1,5 +1,6 @@
 import firebase_admin
 from firebase_admin import credentials, db
+from dotenv import load_dotenv
 from fastapi import FastAPI,HTTPException
 from pydantic import BaseModel
 from typing import Any
@@ -9,6 +10,17 @@ import os
 
 
 app = FastAPI() #FasAPI 인스턴스 생성
+load_dotenv()
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React 앱의 주소
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Process_of_DB: #firebase에 연결 및 데이터를 가져오는 클래스
     def __init__(self,service_account_path: str,database_url: str):
