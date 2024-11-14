@@ -1,8 +1,5 @@
 
 osp_venv/
-PythonWorkSpace/Back/.env
-RevKeyRec/Back/.env
-RevKeyRec/node_modules
-RevKeyRec/osp-revkeyrec-firebase-adminsdk-rvlp5-4a49dda7db.json
-
-
+.env
+node_modules/
+osp-revkeyrec-firebase-adminsdk-rvlp5-4a49dda7db.json
