@@ -1,0 +1,126 @@
+<html>
+    <head>
+      <title>검색 결과</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 60px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          background-color: #f8f9fa;
+        }
+        h1 { color: #333; }
+        .result-card {
+          display: flex;
+          max-width: 1000px;
+          width: 100%;
+          background-color: white;
+          border-radius: 12px;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+          padding: 50px;
+          margin-bottom: 40px;
+          text-align: left;
+        }
+        .product-image {
+          max-width: 45%;
+          height: 65vh;
+          border-radius: 8px;
+          margin-right: 40px;
+        }
+        .separator {
+          width: 1px;
+          background-color: #ddd;
+          opacity: 0.7;
+          margin-right: 40px;
+        }
+        .product-details {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        .product-details h2 { margin: 0; font-size: 48px; color: #333; }
+        .product-details p { font-size: 36px; color: #777; margin-top: 20px; }
+        .view-button {
+          background-color: #007bff;
+          color: white;
+          padding: 20px 40px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 24px;
+          margin-top: 40px;
+          text-decoration: none;
+          display: inline-block;
+        }
+        .view-button:hover { background-color: #0056b3; }
+        .reviews-section {
+          max-width: 1000px;
+          width: 100%;
+          background-color: white;
+          border-radius: 12px;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+          padding: 40px;
+          margin-top: 20px;
+          text-align: left;
+        }
+        .reviews-header { display: flex; justify-content: space-between; align-items: center; }
+        .reviews-header h2 { font-size: 36px; color: #333; }
+        .review {
+          background-color: #f0f0f0;
+          border: 1px solid #ddd;
+          padding: 20px;
+          margin: 15px 0;
+          border-radius: 8px;
+          font-size: 22px;
+          color: #333;
+          line-height: 1.6;
+        }
+        .filter-checkbox { margin-right: 10px; }
+      </style>
+      <script>
+        let showPositive = false;
+        let showNegative = false;
+        function togglePositiveReviews() {
+          showPositive = !showPositive;
+          filterReviews();
+        }
+        function toggleNegativeReviews() {
+          showNegative = !showNegative;
+          filterReviews();
+        }
+        function filterReviews() {
+          document.querySelectorAll('.positive-review').forEach(review => {
+            review.style.display = showPositive || (!showPositive && !showNegative) ? 'block' : 'none';
+          });
+          document.querySelectorAll('.negative-review').forEach(review => {
+            review.style.display = showNegative || (!showPositive && !showNegative) ? 'block' : 'none';
+          });
+        }
+      </script>
+    </head>
+    <body>
+      <h1>검색 결과</h1>
+      <div class="result-card">
+        <img src="https://example.com/path-to-headset-image.jpg" alt="Product Image" class="product-image" />
+        <div class="separator"></div>
+        <div class="product-details">
+          <h2>${response.data.title}</h2>
+          <p>₩123,000</p>
+        </div>
+      </div>
+      <a href="https://www.coupang.com" target="_blank" class="view-button">쿠팡에서 보기</a>
+      <div class="reviews-section">
+        <div class="reviews-header">
+          <h2>리뷰</h2>
+          <div>
+            <label><input type="checkbox" class="filter-checkbox" onclick="togglePositiveReviews()"> 좋아요</label>
+            <label><input type="checkbox" class="filter-checkbox" onclick="toggleNegativeReviews()"> 별로에요</label>
+          </div>
+        </div>
+        ${positiveReviews.map(review => `<div class="review positive-review">${review}</div>`).join('')}
+        ${negativeReviews.map(review => `<div class="review negative-review">${review}</div>`).join('')}
+      </div>
+    </body>
+  </html>
