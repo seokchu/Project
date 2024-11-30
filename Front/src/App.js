@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import {
-  Container,TextField,IconButton,InputAdornment,Typography,Box,Button,AppBar,Toolbar,}
-from "@mui/material";
+  Container, TextField, IconButton, InputAdornment, Typography, Box, Button, AppBar, Toolbar,
+}
+  from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
 
@@ -58,8 +59,7 @@ function App() {
     if (searchQuery) {
       try {
         const response = await axios.get(
-          `https://jsonplaceholder.typicode.com/posts/${searchQuery}`
-        );
+          `http://127.0.0.1:8000/get_data`, { params: { path: searchQuery } }); // Firebase 경로 전달
         const { title, body } = response.data;
 
         const positiveReviews = ["Great product!", "Really enjoyed it!", "Worth the price!"];
@@ -231,7 +231,7 @@ function App() {
     }
   };
 
-  
+
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -310,15 +310,15 @@ function App() {
   </header>
   <section class="products-section">
     ${appleProducts
-      .map(
-        (product) => `
+        .map(
+          (product) => `
         <div class="product-card">
           <img src="${product.image}" alt="${product.name}" />
           <div class="product-name">${product.name}</div>
         </div>
       `
-      )
-      .join("")}
+        )
+        .join("")}
   </section>
 </body>
 
@@ -700,13 +700,13 @@ function App() {
                   marginBottom: "10px",
                 }}
               />
-              <Typography variant="h5" sx={{ fontSize: "2rem", mb: 1, textAlign: "center",fontWeight: "bold", }}> 
+              <Typography variant="h5" sx={{ fontSize: "2rem", mb: 1, textAlign: "center", fontWeight: "bold", }}>
                 {data.title}
               </Typography>
               {dashboardDropdowns[index] &&
                 data.products.map((product, i) => (
-                  <Typography key={i} variant="body1" sx={{ fontSize: "1.5rem", marginTop: "5px",cursor: "pointer",  }}
-                  onClick={() => handleSearch(product)} // 클릭 시 검색 실행 (수정됨)
+                  <Typography key={i} variant="body1" sx={{ fontSize: "1.5rem", marginTop: "5px", cursor: "pointer", }}
+                    onClick={() => handleSearch(product)} // 클릭 시 검색 실행 (수정됨)
                   >
                     {product}
                   </Typography>
