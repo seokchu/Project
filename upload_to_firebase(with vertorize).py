@@ -21,7 +21,7 @@ review_dir = 'C:/Users/tlsdu/Desktop/찐 100개/save_data'
 ref = db.reference('/')
 
 # 키 값을 숫자로 부여하기 위한 초기값
-product_counter = 1
+product_counter = 0
 
 for file_name in os.listdir(review_dir):
     if file_name.endswith('.json'):
