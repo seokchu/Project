@@ -65,7 +65,7 @@ class SentimentAnalyzer:
         
 if __name__ == "__main__": 
     
-    root_dir = Path("/Users/minji/Desktop/한밭대/[강의]24_2학년_2학기/오픈소스/RevKeyRec/rsc/crawled_review") ; save_dir = Path("/Users/minji/Desktop/한밭대/[강의]24_2학년_2학기/오픈소스/RevKeyRec/analyzed_data")
+    root_dir = Path("""""") ; save_dir = Path("""""")
     json_data = [file for file in root_dir.iterdir() if file.is_file()] #파일객체 반환
     
         
