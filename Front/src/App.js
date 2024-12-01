@@ -55,181 +55,81 @@ function App() {
 
   // 검색 핸들러: 상품명을 받아 검색 결과 페이지 생성
   const handleSearch = async (productName = "") => {
-    const searchQuery = productName || query; // productName이 있으면 사용, 없으면 query 사용
+    const searchQuery = productName || query; // 검색어 또는 선택된 제품 이름 사용
     if (searchQuery) {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/get_data`, { params: { path: searchQuery } }); // Firebase 경로 전달
-        const { title, body } = response.data;
+          `http://127.0.0.1:8000/search`, { params: { query: searchQuery } }); // /search로 요청
+        const results = response.data;
 
-        const positiveReviews = ["Great product!", "Really enjoyed it!", "Worth the price!"];
-        const negativeReviews = ["Not as expected.", "Quality could be better.", "Disappointed."];
+        if (results.length === 0) {
+          setError("검색 결과가 없습니다."); // 검색 결과가 없을 때
+          return;
+        }
 
+        setError(""); // 오류 메시지 초기화
+
+        // 새 창에 결과를 표시
         const newWindow = window.open("", "_blank");
         newWindow.document.write(`
           <html>
           <head>
-            <title>Search result</title>
+            <title>Search Results</title>
             <style>
               body {
                 font-family: Montserrat, sans-serif;
                 margin: 0;
-                padding: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                background-color: #FFFFFF;
-              }
-              .app-bar {
-                width: 100%;
-                background-color: #222529;
-                padding: 10px 0;
-                display: flex;
-                justify-content: center;
-              }
-              .app-bar h1 {
-                color: #FFFFFF;
-                font-size: 40px;
-                margin: 0;
-                font-family: Montserrat, sans-serif;
-                font-weight: 500;
-              }
-              .result-container {
-                max-width: 1200px;
-                width: 100%;
-                padding: 50px;
-                margin: 20px auto;
-                background-color: #ffffff;
-                border-radius: 12px;
-                display: flex;
-                align-items: flex-start;
-                box-shadow: none;
-                position: relative;
-              }
-              .product-image {
-                width: 530px;
-                height: 570px;
-                border-radius: 8px;
-                margin-right: 30px;
-              }
-              .product-title {
-                position: absolute;
-                top: 50px; /* 이미지 상단에 고정 */
-                left: 600px; /* 이미지 우측에 고정 */
-                font-size: 48px;
-                color: #333;
-                margin: 0;
-              }
-              .product-description {
-                position: flex; /* 제품 설명은 제품명 아래에 동적으로 배치 */
-                font-size: 36px;
-                color: #777;
-                margin-top: 180px; /* 제품명과 간격 설정 */
-                left: 600px;
-              }
-              .view-button {
-                position: absolute;
-                bottom: 50px; /* 이미지 하단에 고정 */
-                left: 600px; /*아래에서 600은 좌 1000은 우 800은 가운데*/
-                width: 600px;
-                background-color: #222529;
-                color: #FFFFFF;
-                padding: 20px 40px;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 24px;
-                text-decoration: none;
-                display: inline-block;
-                text-align: center; /* 텍스트 가운데 정렬 */
-              }
-              .view-button:hover {
-                background-color: #1a1d1f;
-              }
-              .reviews-section {
-                max-width: 1200px;
-                width: 100%;
-                background-color: white;
-                border-radius: 12px;
-                box-shadow: none;
-                padding: 40px;
-                margin-top: 20px;
-                text-align: left;
-              }
-              .reviews-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-              }
-              .reviews-header h2 {
-                font-size: 42px;
-                color: #333;
-              }
-              .review {
-                background-color: #f0f0f0;
-                border: 1px solid #ddd;
                 padding: 20px;
-                margin: 15px 0;
-                border-radius: 8px;
-                font-size: 22px;
+                background-color: #f9f9f9;
                 color: #333;
-                line-height: 1.6;
               }
-              .filter-checkbox {
-                margin-right: 10px;
+              h1 {
+                font-size: 24px;
+                color: #444;
+                margin-bottom: 20px;
+              }
+              ul {
+                list-style-type: none;
+                padding: 0;
+              }
+              li {
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 10px;
+              }
+              h2 {
+                font-size: 18px;
+                margin: 0 0 10px;
+              }
+              p {
+                font-size: 14px;
+                margin: 5px 0;
               }
             </style>
-            <script>
-              let showPositive = false;
-              let showNegative = false;
-              function togglePositiveReviews() {
-                showPositive = !showPositive;
-                filterReviews();
-              }
-              function toggleNegativeReviews() {
-                showNegative = !showNegative;
-                filterReviews();
-              }
-              function filterReviews() {
-                document.querySelectorAll('.positive-review').forEach(review => {
-                  review.style.display = showPositive || (!showPositive && !showNegative) ? 'block' : 'none';
-                });
-                document.querySelectorAll('.negative-review').forEach(review => {
-                  review.style.display = showNegative || (!showPositive && !showNegative) ? 'block' : 'none';
-                });
-              }
-            </script>
           </head>
           <body>
-            <div class="app-bar">
-              <h1>Search result</h1>
-            </div>
-            <div class="result-container">
-              <img src="https://via.placeholder.com/530x570" alt="Product Image" class="product-image" />
-              <h2 class="product-title">${title}</h2> <!-- 제품명을 이미지 상단에 고정 -->
-              <p class="product-description">${body}</p> <!-- 제품 설명을 제품명 아래에 위치 -->
-              <a href="https://www.coupang.com" target="_blank" class="view-button">쿠팡에서 보기</a> <!-- 버튼을 이미지 하단에 고정 -->
-            </div>
-            <div class="reviews-section">
-              <div class="reviews-header">
-                <h2>Reviews</h2> <!-- 리뷰 섹션 제목 -->
-                <div>
-                  <label><input type="checkbox" class="filter-checkbox" onclick="togglePositiveReviews()"> 좋아요</label>
-                  <label><input type="checkbox" class="filter-checkbox" onclick="toggleNegativeReviews()"> 별로에요</label>
-                </div>
-              </div>
-              ${positiveReviews.map(review => `<div class="review positive-review">${review}</div>`).join('')}
-              ${negativeReviews.map(review => `<div class="review negative-review">${review}</div>`).join('')}
-            </div>
+            <h1>Search Results</h1>
+            <ul>
+              ${results.map(product => `
+                <li>
+                  <h2>${product.name}</h2>
+                  <p>Rating: ${product.rating}</p>
+                  <p>Positive Keywords: ${product.pos_keyword.join(", ")}</p>
+                  <p>Negative Keywords: ${product.neg_keyword.join(", ")}</p>
+                </li>
+              `).join("")}
+            </ul>
           </body>
           </html>
         `);
-        setError("");
       } catch (err) {
-        setError("검색 결과를 찾을 수 없습니다.");
+        setError("검색 결과를 가져오는 데 실패했습니다."); // 오류 처리
       }
     }
   };
+
 
 
 
