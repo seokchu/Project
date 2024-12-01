@@ -1,12 +1,13 @@
-import firebase_admin
 from firebase_admin import credentials, db
 from dotenv import load_dotenv
 from fastapi import FastAPI,HTTPException
 from pydantic import BaseModel
 from typing import List,Dict,Any
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-import os
+from collections import namedtuple
+import os,firebase_admin
+
 
 
 
@@ -49,7 +50,7 @@ firebase_client = Process_of_DB(
     "https://osp-revkeyrec-default-rtdb.firebaseio.com"
     )
 
-
+model = SentenceTransformer("jhgan/ko-sroberta-multitask") #모델 초기화(전역으로)
 def query_to_v(query:str) -> List[float]: 
     """query 벡터화 진행(검색어를 벡터로 변환)
 
@@ -57,11 +58,11 @@ def query_to_v(query:str) -> List[float]:
         query (str): 검색어 입력받음
 
     Returns:
-       List[float]: 검색어의 TF-IDF 벡터
+       List[float]: 검색어 벡터 리스트화
     """
-    tfidf = TfidfVectorizer()
-    tfidf_matrix = tfidf.fit_transform([query]) #iterable
-    return tfidf_matrix[0].toarray()[0] 
+    return model.encode(query).tolist()
+
+
 
 
 @app.get("/search")
@@ -71,7 +72,7 @@ def search_products(query : str):
     Args:
         query (str): 검색할 문자열 쿼리
     Returns:
-    
+       List[str(?)] : 유사한 상품(최대 5개) 정보 리스트 반환
     """
     
     ref = db.reference("/") #DB 루트에서 모든 데이터 접근
@@ -79,33 +80,23 @@ def search_products(query : str):
     query_vector = query_to_v(query)
     
     # 상품 벡터와 검색어 벡터 간의 코사인 유사도 계산
-    results = []
-    
-    for key,info in products.items():
-        p_vector = info["vector"]
+    results = [] ; product_info = namedtuple("product_info",["id","info","similarity"])
+    for product_id, info in products.items():
+        product_vector = info.get("vector") #상품당 벡터 접근
+        similarity = cosine_similarity([query_vector],[product_vector])[0][0]
+        results.append(product_info(product_id,info,similarity)) #상품 id, 상품 정보, 유사도
         
-        
-        similarities = cosine_similarity([query_vector],p_vector)
-        results.append()
+    result = sorted(results,key = lambda x: x.similarity, reverse=True)[:5] #상위 5개
     
-    results = sorted(
-        [
-            
+    return [
+        {
+            "name": item.info["name"],
+            "rating" : item.info["rating"],
+            "pos_keyword": item.info["pos_keyword"],
+            "neg_keyword": item.info["neg_keyword"]
+        }
+        for item in result
         ]
-    )
-    
-
-
-
-
-
-
-
-
-
-
-
-------------------------------------------
 
 
 
@@ -128,21 +119,4 @@ def get_data(path: str):
         return {"data":data}
     except HTTPException as e:
         return {"error":e.detail}
-    
-@app.get("/search")
-def search_products(query : str):
-    """ 사용자의 검색어와 가장 유사한 상품을 반환
-
-    Args:
-        query (str): 검색할 문자열 쿼리
-    Returns:
-    
-    """
-    
-    ref = db.reference("/") #DB 루트에서 모든 데이터 접근
-    products = ref.get()
-    products_list = [item for item in products]
-    
-    query_vector = 
-
-
+   
