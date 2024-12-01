@@ -64,7 +64,7 @@ def divide_state(input_path:str,output_path:str):
                 result = analyze_sentiment(text) 
                 
                 #sentence 단위
-                tmp.append(result) 
+                tmp.append([text,result]) 
             
             
             #파일 단위로
