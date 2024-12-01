@@ -71,7 +71,7 @@ def divide_state(input_path:str,output_path:str):
             container[file.name] = tmp 
             bar.update(1)
         
-    save_name = "divide_state.json"
+    save_name = Path("divide_state.json")
     with open(output_path/save_name,'w',encoding='utf-8') as f:
         json.dump(container,f,ensure_ascii=False,indent=4)
       
