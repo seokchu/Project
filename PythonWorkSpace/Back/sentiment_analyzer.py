@@ -1,91 +1,86 @@
-from deep_translator import GoogleTranslator
-from textblob import TextBlob #영어 감성 분석을 위한 라이브러리
-from sklearn.feature_extraction.text import CountVectorizer #키워드 추출을 위한 라이브러리
-from collections import Counter #단어 빈도수 계산
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from pathlib import Path
-from tqdm import tqdm
-import os,json
+from typing import Any,Dict
+import torch,json,os,tqdm
 
-class SentimentAnalyzer:
-    def __init__(self,reviews):
-        self.reviews = reviews
-        
-    def translate_to_eng(self,text): #번역해주는 메서드 (한->영)
-        return GoogleTranslator(source="ko", target="en").translate(text)
+
+model_name = "nlp04/korean_sentiment_analysis_kcelectra"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSequenceClassification.from_pretrained(model_name)
+device = "cpu" ; model.to(device)
+
+def analyze_sentiment(text):
+    """감석 분석 수행 함수
+
+    Args:
+        text (_type_): 감석 분석 대상 텍스트
+    Returns:
+        Dict : 부정,중립,긍정 각 레이블 수치
+
+    """
     
-    def translate_to_ko(self,text): #영->한
-        return GoogleTranslator(source="en", target="ko").translate(text)
+    inputs = tokenizer(
+        text,                        # 분석할 텍스트
+        return_tensors="pt",         # PyTorch 텐서로 반환
+        truncation=True,             # 최대 길이를 초과하는 텍스트는 자름
+        max_length=512               # 최대 512 토큰으로 제한
+    ).to(device)                     # 텐서를 GPU 또는 CPU로 이동
     
-    def analyzer(self,reviews): #감성분석 수행
-        positive = [] ; negative =[]
-        
-        for review in reviews:
-            eng_text = self.translate_to_eng(review["리뷰내용"]) #리뷰 내용 접근
-            blob = TextBlob(eng_text)
-            polarity = blob.sentiment.polarity #0을 기준으로 긍정/부정을 가려냄, 1->긍정 / -1 ->부정 / 0 -> 중립
-            
-            if polarity > 0 : #긍정적인 리뷰임
-                positive.append(eng_text)
-            else: #0과 같거나 작은 경우는 부정적인 리뷰로 분류
-                negative.append(eng_text)
-        
-        return positive,negative #긍•부정 분류한 text로 구성된 리스트 반환
+    # 모델 추론 수행 (기울기 계산 없이)
+    with torch.no_grad():
+        outputs = model(**inputs)   # 모델에 입력 데이터를 전달하고 결과를 얻음
     
-    def extract_keywords(self,reviews,k): #top-k 적용, default=5
-        if not reviews: #리뷰가 비어있다면
-            return []
-        
-        vectorizer = CountVectorizer(stop_words="english") #영여 불용어를 제거하는 parameter라고 함
-        all_reviews = " ".join(reviews)
-        word_cnt = vectorizer.fit_transform([all_reviews]) #각 단어의 빈도수 계산
-        
-        #전체로 묶어서 전체 문장에대한 단어 나열 및 전체 빈도수 확인
-        word_frq = dict(zip(vectorizer.get_feature_names_out(),word_cnt.toarray().sum(axis=0)))
-        
-        #키워드 추출(k개만)
-        keywords = [word for word,cnt in Counter(word_frq).most_common(k)]
-        return keywords
+    # 출력 로짓(logits)을 소프트맥스 함수로 확률 값으로 변환
+    probabilities = torch.nn.functional.softmax(outputs.logits, dim=-1)
+
+    # 확률값을 리스트 형식으로 변환
+    sentiment_score = probabilities[0].tolist()
+
+    # 모델이 반환하는 각 레이블: 부정, 중립, 긍정
+    labels = ["neg", "neut", "pos"]
+
+    # 레이블과 점수를 딕셔너리로 매핑하여 결과 생성
+    result = {label: score for label, score in zip(labels, sentiment_score)}
     
-    #감성분석 + 키워드 추출 수행하는 메인함수!
-    def get_keywords(self,k=5) -> int:
-        pos_rev,neg_rev = self.analyzer(self.reviews) #리뷰 분류
-        
-        positive_keywords = self.extract_keywords(pos_rev,k) #긍정 키워드
-        negative_keywords = self.extract_keywords(neg_rev,k) #부정 키워드
-        
-        #번역작업
-        positive_ko = [self.translate_to_ko(text) for text in positive_keywords] 
-        negative_ko= [self.translate_to_ko(text) for text in negative_keywords]
-        
-        return {
-            "pos":positive_ko,
-            "neg":negative_ko
-        } #test용 return 값
-        
-        
-if __name__ == "__main__": 
-    
-    root_dir = Path("""""") ; save_dir = Path("""""")
-    json_data = [file for file in root_dir.iterdir() if file.is_file()] #파일객체 반환
-    
-        
-    with tqdm(total=len(json_data),desc= "Process rate") as bar:
-        for file in json_data:
-            if str(file).split("/")[-1] == ".DS_Store" or str(file).split("/")[-1] == "object_url.csv":
-                continue
-            object_name = str(file).split('_')[-1]
-            
+    return result  # 분석 결과 반환
+
+
+
+def divide_state(input_path:str,output_path:str):
+    """긍정/중립/부정 감성 분석 모델 진행
+
+    Args:
+        input_path (str): Phrases_JSON의 절대경로
+        output_path (str): 분석 파일의 저장 절대경로
+    """
+    phrases_json = Path(input_path) ; container = {}
+    with tqdm(total=100,desc = "Progress") as bar:
+        for file in phrases_json.glob('*.json'):
             with open(file,'r',encoding='utf-8') as f:
-                data = json.load(f)
+                data = json.load(f)["data"]
                 
-            analyzer = SentimentAnalyzer(data)
-            result = analyzer.get_keywords(k=10)
-            save_file = save_dir / object_name 
+            tmp = []
+            for text in data:
+                result = analyze_sentiment(text) 
+                
+                #sentence 단위
+                tmp.append(result) 
             
-            with open(save_file,'w',encoding='utf-8') as f:
-                json.dump(result,f,ensure_ascii=False,indent=4)
-                
+            
+            #파일 단위로
+            container[file.name] = tmp 
             bar.update(1)
-            
-                    
         
+    save_name = "divide_state.json"
+    with open(output_path/save_name,'w',encoding='utf-8') as f:
+        json.dump(container,f,ensure_ascii=False,indent=4)
+      
+      
+      
+      
+if __name__ == "__main__" : 
+    divide_state("""Phrases_Json의 경로""","""분석한 데이터가 저장될 폴더 경로""")
+            
+    
+        
+    
