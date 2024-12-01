@@ -78,4 +78,4 @@ def generate_JSON(review_dir:str,phrases_JSON:str):
 
 
 if __name__ == "__main__":
-    generate_JSON("D:/학교/team2/RevKeyRec/rsc/crawled_review","D:/학교/team2/RevKeyRec/rsc/phrases_JSON")
+    generate_JSON("crawled_review 로컬 경로","Phrases_JSON 로컬 경로")
