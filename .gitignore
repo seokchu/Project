@@ -4,4 +4,4 @@ osp_venv/
 node_modules/
 osp-revkeyrec-firebase-adminsdk-rvlp5-baafce142b.json
 osp-revkeyrec-firebase-adminsdk-rvlp5-4a49dda7db.json
-PythonWorkSpace/Back/app/utils/firebase.json
+Back/app/utils/firebase.json
