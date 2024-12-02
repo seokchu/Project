@@ -4,6 +4,7 @@ import axios from "axios";
 import { Container, Rating, Chip, Grid2 as Grid, Paper } from "@mui/material";
 // Component
 import NavbarComponent from './Components/Navbar';
+import FooterComponent from './Components/Footer';
 
 const ProductDetail = () => {
     const { productID } = useParams();
@@ -75,6 +76,7 @@ const ProductDetail = () => {
                     style={{
                         top: "0px",
                         paddingTop: "40px",
+                        paddingBottom: "10%"
                     }}
                 >
                     <h5 style={{ marginBottom: "10px" }}>{results.name}</h5>
@@ -122,6 +124,7 @@ const ProductDetail = () => {
 
             {/* Error Message */}
             {error && <div style={{ color: 'red', marginTop: '20px' }}>{error}</div>}
+            {/* <FooterComponent /> */}
         </Container>
     );
 };

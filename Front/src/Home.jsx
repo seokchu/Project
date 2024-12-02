@@ -3,6 +3,7 @@ import { Container, Box } from "@mui/material";
 
 // Components
 import NavbarComponent from './Components/Navbar';
+import FooterComponent from './Components/Footer.js';
 import SearchBox from './Components/SearchBox';
 import AboutSection from './Components/Home/AboutSection';
 import DashboardBox from './Components/Home/DashboardBox';
@@ -118,6 +119,7 @@ function Home() {
           />
         ))}
       </Box>
+      <FooterComponent />
     </Container>
   );
 }

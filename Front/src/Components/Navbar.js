@@ -36,27 +36,12 @@ const Navbar = () => {
     };
   }, []);
 
-  // 특정 섹션으로 스크롤 이동하는 함수
-  const handleNavigation = (section) => {
-    const sectionMap = {
-      HowToUse: "how-to-use",
-      Dashboard: "dashboard-section",
-      Search: null,
-    };
-
-    if (section === "Search") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      document.getElementById(sectionMap[section]).scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <AppBar
       position="fixed"
       style={{
         backgroundColor: headerColor, // 스크롤에 따라 배경색 변경
-        color:color,
+        color: color,
         boxShadow: boxShadow,
         backdropFilter: "blur(10px)",
         transition: "background-color 0.3s ease-out", // 색상 변경에 부드러운 전환 효과
@@ -67,18 +52,24 @@ const Navbar = () => {
     >
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1, marginTop: "0px" }} >
-          <Button color="inherit"  style={{ padding: "10px", margin: "0px" }} onClick={() => {navigate("/home")}} >
+          <Button color="inherit" style={{ padding: "10px", margin: "0px" }} onClick={() => { navigate("/home") }} >
             <FaCartShopping size="1.2rem" />
           </Button>
         </Typography>
-        <Button color="inherit" onClick={() => handleNavigation("HowToUse")}>
-          How To Use
+        <Button color="inherit" onClick={() => { navigate("/home") }}>
+          <b>Home</b>
         </Button>
-        <Button color="inherit" onClick={() => handleNavigation("Dashboard")}>
-          Dashboard
+        <Button color="inherit" onClick={() => { }}>
+          IT Device
         </Button>
-        <Button color="inherit" onClick={() => handleNavigation("Search")}>
-          Search
+        <Button color="inherit" onClick={() => { }}>
+          Home Appliance
+        </Button>
+        <Button color="inherit" onClick={() => { }}>
+          Apple
+        </Button>
+        <Button color="inherit" onClick={() => { }}>
+          Others
         </Button>
       </Toolbar>
     </AppBar>
