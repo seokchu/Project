@@ -1,0 +1,97 @@
+h1{
+    font-family: 'Freesentation-9Black';
+}
+h2{
+    font-family: 'Freesentation-9Black';
+}
+h3{
+    font-family: 'Freesentation-9Black';
+    font-weight: 900;
+    font-size: 3.6rem;
+}
+h4{
+    font-family: 'Freesentation-9Black';
+    font-weight: 900;
+    font-size: 3rem;
+}
+h5{
+    font-family: 'Freesentation-9Black';
+    font-weight: 900;
+    font-size: 2.4rem;
+}
+h6{
+    font-family: 'Freesentation-9Black';
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+strong{
+    font-family: 'Freesentation-9Black';
+    font-weight: 700;
+}
+.gradientText {
+    font-weight: bold; /* Bold text */
+    background-image: linear-gradient(to right,#b63f3f, #b63f3f, #ffcc5f, #3e9760, #488ce6); /* Gradient from left to right */
+    -webkit-background-clip: text; /* Clip the background to the text */
+    color: transparent; /* Make the text itself transparent so the gradient shows */
+  }
+.gradientBorderText {
+    font-weight: bold; /* Bold text */
+    color: #f5f5f5;
+    background: linear-gradient(-45deg, #eeaa52, #e73c6f, #2394d5, #2af3b7);
+    -webkit-background-clip: text;
+    -webkit-text-stroke: 5px transparent;
+  }
+
+.smallDiv{
+    padding: "20px";
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+
+
+.header {
+    text-align: center;
+    padding: 20px 0;
+  }
+  
+  .header img {
+    display: block;
+    margin: 0 auto;
+    width: 150px;
+    height: auto;
+  }
+  
+  .header h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .productsSection {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .productCard {
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 10px;
+  }
+  
+  .productCard img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .productName {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
