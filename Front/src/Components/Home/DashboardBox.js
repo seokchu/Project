@@ -1,7 +1,10 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
 
 const DashboardBox = ({ data, isDropdownOpen, onToggle, index }) => {
+  const navigate = useNavigate();
+
   return (
     <Box
       sx={{
@@ -25,7 +28,7 @@ const DashboardBox = ({ data, isDropdownOpen, onToggle, index }) => {
         },
 
       }}
-      onClick={() => onToggle(index)}
+      onClick={() => { navigate(`/dashboard/${data.category}`) }}
     >
       <h5
         style={{

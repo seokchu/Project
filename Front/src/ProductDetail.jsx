@@ -4,7 +4,6 @@ import axios from "axios";
 import { Container, Rating, Chip, Grid2 as Grid, Paper } from "@mui/material";
 // Component
 import NavbarComponent from './Components/Navbar';
-import FooterComponent from './Components/Footer';
 
 const ProductDetail = () => {
     const { productID } = useParams();

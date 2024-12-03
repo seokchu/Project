@@ -59,16 +59,16 @@ const Navbar = () => {
         <Button color="inherit" onClick={() => { navigate("/home") }}>
           <b>Home</b>
         </Button>
-        <Button color="inherit" onClick={() => { }}>
+        <Button color="inherit" onClick={() => { navigate("/dashboard/IT") }}>
           IT Device
         </Button>
-        <Button color="inherit" onClick={() => { }}>
+        <Button color="inherit" onClick={() => { navigate("/dashboard/Home") }}>
           Home Appliance
         </Button>
-        <Button color="inherit" onClick={() => { }}>
+        <Button color="inherit" onClick={() => { navigate("/dashboard/apple_data") }}>
           Apple
         </Button>
-        <Button color="inherit" onClick={() => { }}>
+        <Button color="inherit" onClick={() => { navigate("/dashboard/Others") }}>
           Others
         </Button>
       </Toolbar>

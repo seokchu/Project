@@ -42,18 +42,23 @@ function Home() {
     {
       title: "IT Devices",
       image: "/image/it.jpg",
+      category: "IT"
     },
     {
       title: "Home Appliances",
       image: "/image/homeAppliance.jpg",
+      category: "Home"
+
     },
     {
       title: "Apple",
       image: "/image/appleOnly.jpg",
+      category: "apple_data"
     },
     {
       title: "Others",
       image: "/image/others.jpg",
+      category: "Others"
     },
   ];
 

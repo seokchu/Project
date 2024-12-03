@@ -35,12 +35,25 @@ def search_products(query: str):
         for item in result
     ]
 
-@router.get("/{category}")
-def category_items():
-    ref = db.reference("/{category}")
-    products = ref.get()    
-    
-    return products
+@router.get("/category_search/{category}")
+def category_items(category:str):
+    ref = db.reference(f"/{category}")
+    products = ref.get() ; datas = []
+    print(type(products))
+    for product in products:
+        for product_id in product.keys():
+            info = product[product_id]
+            datas.append(
+                {
+                    "product_id" : product_id,
+                    "name": info["name"],
+                    "rating": info["rating"],
+                    "pos_keyword": info["pos_keyword"],
+                    "neg_keyword": info["neg_keyword"]
+                }
+            )
+        
+    return datas
 
 @router.get("/{category}_search")
 def search_category_items(category:str,query:str):
